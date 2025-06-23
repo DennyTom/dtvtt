@@ -195,7 +195,7 @@ jobs:
 
       - name: Install Rust toolchain
         if: ${{ env.is_platform_enabled == 'true' }}
-        uses: dtolnay/rust-toolchain@nightly-2024-01-01
+        uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.targets }}
 
