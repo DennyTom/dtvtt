@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use bevy_mod_outline::*;
 use std::f32::consts::PI;
+use bevy_panorbit_camera::{PanOrbitCamera, PanOrbitCameraPlugin};
 
 /// Tag to track if an object is selected or not
 #[derive(Component)]
@@ -8,8 +9,19 @@ struct Selected;
 
 fn main() {
     App::new()
-        .add_plugins((DefaultPlugins, MeshPickingPlugin, OutlinePlugin))
+        .add_plugins((DefaultPlugins.set(
+            WindowPlugin {
+                primary_window: Window {
+                    title: "DTVTT".to_string(),
+                    fit_canvas_to_parent: true,
+                    ..default()
+                }
+                .into(),
+                ..default()
+            }),
+            MeshPickingPlugin, OutlinePlugin, PanOrbitCameraPlugin))
         .add_systems(Startup, (setup, spawn_initial_token).chain())
+
         .run();
 }
 
@@ -131,7 +143,11 @@ fn setup(
 
     // Add camera
     commands.spawn((
-        Camera3d::default(),
+        PanOrbitCamera{
+            button_orbit: MouseButton::Middle,
+            button_pan: MouseButton::Right,
+            ..default()
+        },
         Transform::from_xyz(0.0, 15.0, 15.0).looking_at(Vec3::ZERO, Vec3::Y),
     ));
 }
