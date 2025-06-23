@@ -36,10 +36,12 @@ fn spawn_token_on_click(
     }
 
     let (camera, camera_transform) = *camera;
-    
+
     if let Some(cursor_pos) = window.cursor_position() {
         if let Ok(ray) = camera.viewport_to_world(camera_transform, cursor_pos) {
-            if let Some(distance) = ray.intersect_plane(ground.translation(), InfinitePlane3d::new(ground.up())) {
+            if let Some(distance) =
+                ray.intersect_plane(ground.translation(), InfinitePlane3d::new(ground.up()))
+            {
                 let point = ray.get_point(distance);
                 spawn_token(&mut commands, point, &token_assets);
             }
@@ -50,11 +52,7 @@ fn spawn_token_on_click(
 const TOKEN_HEIGHT: f32 = 0.1;
 const TOKEN_RADIUS: f32 = 0.5;
 
-fn spawn_token(
-    commands: &mut Commands,
-    position: Vec3,
-    token_assets: &TokenAssets,
-) {
+fn spawn_token(commands: &mut Commands, position: Vec3, token_assets: &TokenAssets) {
     // Spawn token
     commands
         .spawn((
@@ -83,7 +81,7 @@ fn spawn_initial_token(
         shape: meshes.add(Extrusion::new(Circle::new(TOKEN_RADIUS), TOKEN_HEIGHT)),
         material: materials.add(StandardMaterial::from_color(Color::srgb_u8(255, 0, 0))),
     };
-    
+
     // Clone the token_assets before moving it into the resource
     let token_assets_clone = token_assets.clone();
     commands.insert_resource(token_assets);
@@ -111,14 +109,15 @@ fn setup(
     }
 
     // Add ground
-    commands.spawn((
-        Mesh3d(ground_shape.clone()),
-        MeshMaterial3d(ground_material.clone()),
-        Transform::from_translation(Vec3::new(0.0, -ground_height, 0.0)),
-        Ground,
-        Pickable::default(),
-    ))
-    .observe(spawn_token_on_click);
+    commands
+        .spawn((
+            Mesh3d(ground_shape.clone()),
+            MeshMaterial3d(ground_material.clone()),
+            Transform::from_translation(Vec3::new(0.0, -ground_height, 0.0)),
+            Ground,
+            Pickable::default(),
+        ))
+        .observe(spawn_token_on_click);
 
     // Add a light source
     commands.spawn((
@@ -193,16 +192,18 @@ fn drag_on_drag(
     ground: Single<&GlobalTransform, With<Ground>>,
 ) {
     let (camera, camera_transform) = *camera;
-    
+
     let Some(cursor_pos) = window.cursor_position() else {
         return;
     };
-    
+
     let Ok(ray) = camera.viewport_to_world(camera_transform, cursor_pos) else {
         return;
     };
 
-    let Some(distance) = ray.intersect_plane(ground.translation(), InfinitePlane3d::new(ground.up())) else {
+    let Some(distance) =
+        ray.intersect_plane(ground.translation(), InfinitePlane3d::new(ground.up()))
+    else {
         return;
     };
     let point = ray.get_point(distance);
@@ -211,7 +212,9 @@ fn drag_on_drag(
         return;
     };
 
-    let Some(prev_distance) = prev_ray.intersect_plane(ground.translation(), InfinitePlane3d::new(ground.up())) else {
+    let Some(prev_distance) =
+        prev_ray.intersect_plane(ground.translation(), InfinitePlane3d::new(ground.up()))
+    else {
         return;
     };
     let prev_point = prev_ray.get_point(prev_distance);
