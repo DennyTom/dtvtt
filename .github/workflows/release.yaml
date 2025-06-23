@@ -92,9 +92,6 @@ env:
   # See: <https://github.com/orgs/community/discussions/27059>.
   use_github_cache: false
 
-  # Set version based on trigger
-  VERSION: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || (github.event.inputs && github.event.inputs.version) || '' }}
-
 jobs:
   # Forward some environment variables as outputs of this job.
   # This is needed because the `env` context can't be used in the `if:` condition of a job:
@@ -123,7 +120,7 @@ jobs:
     needs:
       - get-version
     env:
-      version: ${{ env.VERSION }}
+      version: ${{ needs.get-version.outputs.version }}
       # Avoid rate-limiting. See: <https://github.com/cargo-bins/cargo-binstall/issues/2045>.
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
