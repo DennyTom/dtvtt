@@ -28,8 +28,8 @@ bevy_mod_outline = "0.10.2"
 # in your rustflags for both local and CI/CD web builds, taking into account that rustflags specified in
 # multiple places are NOT combined (see <https://github.com/rust-lang/cargo/issues/5376>).
 # Alternatively, you can opt out of the rustflags check with this patch:
-#[patch.crates-io]
-#getrandom = { git = "https://github.com/benfrankel/getrandom" }
+[patch.crates-io]
+getrandom = { git = "https://github.com/benfrankel/getrandom" }
 
 [features]
 # Default to a native dev build.
