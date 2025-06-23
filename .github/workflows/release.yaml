@@ -1,11 +1,6 @@
 name: Release
 
 on:
-  # Trigger on new tags matching v* pattern (e.g. v1.0.0)
-  push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+*'  # Matches semantic version tags like v1.0.0, v2.1.4, etc.
-
   # Trigger this workflow on a manual workflow dispatch.
   workflow_dispatch:
     inputs:
