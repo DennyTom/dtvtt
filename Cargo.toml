@@ -82,6 +82,7 @@ nonstandard_macro_braces = "warn"
 [package.metadata.bevy_lint]
 # panicking_methods = "deny"
 # pedantic = "warn"
+missing_reflect = "warn"
 
 
 # Compile with Performance Optimizations:
