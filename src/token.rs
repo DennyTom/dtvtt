@@ -7,13 +7,26 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(Startup, setup);
 }
 
+const TANK_WIDTH: f32 = 2.0;
+const TANK_LENGTH: f32 = 5.0;
+const TANK_HEIGHT: f32 = 0.75;
+const TANK_TURRET_HEIGHT: f32 = 0.5;
+const TANK_TURRET_RADIUS: f32 = 0.75;
+const TANK_GUN_LENGTH: f32 = 3.0;
+const TANK_GUN_RADIUS: f32 = 0.05;
+
 fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     let token_assets = TokenAssets {
-        shape: meshes.add(Extrusion::new(Circle::new(TOKEN_RADIUS), TOKEN_HEIGHT)),
+        shape: meshes.add(Cuboid::new(TANK_WIDTH, TANK_HEIGHT, TANK_LENGTH)),
+        turret_shape: meshes.add(Extrusion::new(
+            Circle::new(TANK_TURRET_RADIUS),
+            TANK_TURRET_HEIGHT,
+        )),
+        gun_shape: meshes.add(Cylinder::new(TANK_GUN_RADIUS, TANK_GUN_LENGTH)),
         material: materials.add(StandardMaterial::from_color(Color::srgb_u8(255, 0, 0))),
     };
 
@@ -28,6 +41,8 @@ pub(super) struct Selected;
 #[reflect(Resource)]
 pub(super) struct TokenAssets {
     shape: Handle<Mesh>,
+    turret_shape: Handle<Mesh>,
+    gun_shape: Handle<Mesh>,
     material: Handle<StandardMaterial>,
 }
 
@@ -57,16 +72,12 @@ pub(super) fn spawn_token_on_click(
     }
 }
 
-const TOKEN_HEIGHT: f32 = 0.1;
-const TOKEN_RADIUS: f32 = 0.5;
-
 fn spawn_token(commands: &mut Commands, position: Vec3, token_assets: &TokenAssets) {
     commands
         .spawn((
             Mesh3d(token_assets.shape.clone()),
             MeshMaterial3d(token_assets.material.clone()),
-            Transform::from_translation(position + Vec3::new(0.0, TOKEN_HEIGHT / 2.0, 0.0))
-                .with_rotation(Quat::from_rotation_x(-PI / 2.0)),
+            Transform::from_translation(position + Vec3::new(0.0, TANK_HEIGHT / 2.0, 0.0)),
             OutlineVolume {
                 width: 4.0f32,
                 ..default()
@@ -74,6 +85,25 @@ fn spawn_token(commands: &mut Commands, position: Vec3, token_assets: &TokenAsse
             OutlineMode::FloodFlat,
             Pickable::default(),
         ))
+        .with_children(|parent| {
+            parent
+                .spawn((
+                    Mesh3d(token_assets.turret_shape.clone()),
+                    MeshMaterial3d(token_assets.material.clone()),
+                    Transform::from_rotation(Quat::from_rotation_x(-PI / 2.0)).with_translation(
+                        Vec3::new(0.0, TANK_HEIGHT / 2.0 + TANK_TURRET_HEIGHT / 2.0, 0.0),
+                    ),
+                    Pickable::IGNORE,
+                ))
+                .with_children(|parent2| {
+                    parent2.spawn((
+                        Mesh3d(token_assets.gun_shape.clone()),
+                        MeshMaterial3d(token_assets.material.clone()),
+                        Transform::from_translation(Vec3::new(0.0, TANK_GUN_LENGTH / 2.0, 0.0)),
+                        Pickable::IGNORE,
+                    ));
+                });
+        })
         .observe(select_on_click)
         .observe(drag_on_drag);
 }

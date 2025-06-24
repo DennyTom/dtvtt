@@ -1,15 +1,8 @@
-# Demo
-
-- [x] Round token
-- [ ] Rectangular token
-- [ ] Token gallery
-- [ ] Terrain tool
-- [ ] Collisions
-
 # Tonks
 
-- [ ] Tonk with turret
+- [x] Tonk with turret token
 - [ ] Movement rules
+- [ ] Terrain
 - [ ] Measuring
 - [ ] Token UI
 - [ ] Dice
