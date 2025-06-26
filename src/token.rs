@@ -224,6 +224,7 @@ fn drag_fn(
     mut query: Query<(&mut Transform, &Draggable, &Selectable)>,
     camera: Single<(&Camera, &GlobalTransform)>,
     window: Single<&Window>,
+    keys: Res<ButtonInput<KeyCode>>,
 ) {
     drag.propagate(true);
 
@@ -256,6 +257,13 @@ fn drag_fn(
     let prev_point = draggable.cursor_start_pos.unwrap();
 
     let world_delta = point - prev_point;
+
+    let look_at = keys.pressed(KeyCode::Space);
+
+    if look_at {
+        transform.look_at(point, Vec3::Y);
+        return;
+    }
 
     match draggable.drag_type {
         DragType::Simple => {
