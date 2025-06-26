@@ -13,6 +13,7 @@ fn main() {
                 primary_window: Window {
                     title: "DTVTT".to_string(),
                     fit_canvas_to_parent: true,
+                    prevent_default_event_handling: false,
                     ..default()
                 }
                 .into(),
